@@ -14,6 +14,7 @@ GITHUB_REPO_URL = os.getenv("GITHUB_REPO_URL")
 TIME_PERIOD = 10
 LOG_FILE = "out.log"
 
+
 def run_command(command):
     """Run a shell command and return the output."""
     try:
@@ -28,11 +29,15 @@ def run_command(command):
     except subprocess.CalledProcessError as e:
         return None, e.stderr.decode().strip()
 
+
 def log_message(message):
     """Log a message to the log file with timestamp."""
     with open(LOG_FILE, "a") as log_file:
-        timestamp = datetime.now(pytz.timezone("Asia/Tehran")).strftime("%Y-%m-%d %H:%M:%S")
+        timestamp = datetime.now(pytz.timezone("Asia/Tehran")).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
         log_file.write(f"{timestamp} - {message}\n")
+
 
 def initialize_git_repo():
     """Initialize a new Git repository if it doesn't exist."""
@@ -41,6 +46,7 @@ def initialize_git_repo():
     run_command('git commit --allow-empty -m "Initial commit"')
     run_command("git branch -M main")
     print("Done.")
+
 
 def pull_latest_changes(origin):
     """Pull the latest changes from the remote repository."""
@@ -62,6 +68,7 @@ def pull_latest_changes(origin):
     else:
         print("Done.")
         return True
+
 
 def perform_git_operations(origin):
     """Perform the main git operations."""
@@ -104,10 +111,11 @@ def perform_git_operations(origin):
         # Wait for the next push period
         time.sleep(TIME_PERIOD)
 
+
 def main():
     """Main function to run the script."""
     origin = f"https://{GITHUB_USERNAME}:{GITHUB_TOKEN}@{GITHUB_REPO_URL}"
-    
+
     if not os.path.exists(os.path.join(os.getcwd(), ".git")):
         initialize_git_repo()
     else:
@@ -119,6 +127,7 @@ def main():
             perform_git_operations(origin)
         except KeyboardInterrupt:
             print("\nOperation canceled.")
+
 
 if __name__ == "__main__":
     main()
